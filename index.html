@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Argon - Skin Disease Detector</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-image: url('/static/bg.jpg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    .drop-zone {
+      border: 2px dashed #ccc;
+      padding: 2rem;
+      cursor: pointer;
+      transition: background 0.3s;
+      position: relative;
+    }
+
+    .drop-zone.dragover {
+      background: #e8f0fe;
+    }
+
+    #preview {
+      max-width: 100%;
+      margin-top: 10px;
+      border-radius: 10px;
+      display: none;
+    }
+
+    #removeBtn {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2 class="mb-4">Argon - Skin Disease Identification</h2>
+    <form action="/predict" method="POST" enctype="multipart/form-data" id="uploadForm">
+      <input type="file" name="image" id="fileInput" hidden required accept="image/*">
+
+      <div class="drop-zone" id="dropZone" onclick="fileInput.click();">
+        <span id="dropText">Drag & Drop Image or Click to Upload</span>
+        <img id="preview" alt="Preview">
+        <button type="button" class="btn btn-sm btn-danger mt-2" id="removeBtn">Remove</button>
+      </div>
+
+      <button type="submit" class="btn btn-primary mt-3 w-100">Detect Disease</button>
+    </form>
+  </div>
+
+  <script>
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const preview = document.getElementById('preview');
+    const removeBtn = document.getElementById('removeBtn');
+    const dropText = document.getElementById('dropText');
+
+    dropZone.addEventListener('dragover', e => {
+      e.preventDefault();
+      dropZone.classList.add('dragover');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('dragover');
+    });
+
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      fileInput.files = e.dataTransfer.files;
+      handleFile();
+      dropZone.classList.remove('dragover');
+    });
+
+    fileInput.addEventListener('change', handleFile);
+
+    removeBtn.addEventListener('click', () => {
+      fileInput.value = '';
+      preview.style.display = 'none';
+      removeBtn.style.display = 'none';
+      dropText.style.display = 'block';
+    });
+
+    function handleFile() {
+      const file = fileInput.files[0];
+      if (file) {
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = 'block';
+        removeBtn.style.display = 'inline-block';
+        dropText.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>
